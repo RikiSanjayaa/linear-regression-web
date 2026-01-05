@@ -1,26 +1,52 @@
-export default function FormulaDisplay({ formula, variables, explanation }) {
-  // Render formula with syntax highlighting
-  const renderFormula = () => {
-    if (!formula) return null;
+import { useEffect, useRef } from 'react';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
-    // Split formula into parts and highlight variables
-    const parts = formula.split(/(\b[a-z]\b|[+\-*/=()²∑])/gi);
+/**
+ * FormulaDisplay - Renders mathematical formulas using KaTeX
+ * 
+ * @param {string} formula - LaTeX formula string
+ * @param {string} explanation - Optional explanation text below the formula
+ * @param {boolean} displayMode - If true, renders in display mode (centered, larger). Default: true
+ * @param {string} size - Formula size: 'small', 'medium', 'large'. Default: 'medium'
+ */
+export default function FormulaDisplay({
+  formula,
+  explanation,
+  displayMode = true,
+  size = 'medium'
+}) {
+  const containerRef = useRef(null);
 
-    return parts.map((part, index) => {
-      if (variables && variables.includes(part)) {
-        return <span key={index} className="formula-var">{part}</span>;
-      } else if ('[+-*/=]'.includes(part)) {
-        return <span key={index} className="formula-operator">{part}</span>;
+  useEffect(() => {
+    if (containerRef.current && formula) {
+      try {
+        katex.render(formula, containerRef.current, {
+          displayMode: displayMode,
+          throwOnError: false,
+          trust: true,
+          strict: false,
+          output: 'html'
+        });
+      } catch (err) {
+        console.error('KaTeX render error:', err);
+        containerRef.current.textContent = formula;
       }
-      return <span key={index}>{part}</span>;
-    });
-  };
+    }
+  }, [formula, displayMode]);
+
+  const sizeClass = {
+    'small': 'formula-small',
+    'medium': 'formula-medium',
+    'large': 'formula-large'
+  }[size] || 'formula-medium';
 
   return (
     <div className="formula-container">
-      <div className="formula">
-        {renderFormula()}
-      </div>
+      <div
+        ref={containerRef}
+        className={`formula ${sizeClass}`}
+      />
       {explanation && (
         <div className="formula-explanation">
           {explanation}

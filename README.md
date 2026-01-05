@@ -38,7 +38,7 @@ Aplikasi web interaktif untuk mempelajari dan mendemonstrasikan konsep regresi l
    npm run dev
    ```
 
-4. **Buka browser** dan akses `http://localhost:5173` (atau port yang ditampilkan di terminal).
+4. **Buka browser** dan akses `http://localhost:3000` (atau port yang ditampilkan di terminal).
 
 ## Build untuk Production
 
